@@ -11,7 +11,12 @@ export const quotesApi = createApi({
             providesTags: ['Quotes']
         }),
         createQuote: build.mutation({
-
+            query: quote => ({
+                url: 'quotes',
+                method: 'POST',
+                body: quote,
+            }),
+            invalidatesTags: ['Quotes']
         }),
         toggleFake: build.mutation({
 
@@ -23,5 +28,5 @@ export const quotesApi = createApi({
 })
 
 export const {
-    useGetQuotesQuery, 
+    useGetQuotesQuery, useCreateQuoteMutation,
 } = quotesApi
