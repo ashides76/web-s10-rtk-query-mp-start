@@ -4,10 +4,12 @@ import {
   setHighlightedQuote,
   toggleVisibility,
 } from '../state/quotesSlice'
-import { useGetQuotesQuery } from '../state/quotesApi'
+import { useGetQuotesQuery, useToggleFakeMutation, useDeleteQuoteMutation } from '../state/quotesApi'
 
 export default function Quotes() {
   const {data: quotes} = useGetQuotesQuery()
+  const [toggleFake] = useToggleFakeMutation()
+  const [deleteQuote] = useDeleteQuoteMutation()
 
   const displayAllQuotes = useSelector(st => st.quotesState.displayAllQuotes)
   const highlightedQuote = useSelector(st => st.quotesState.highlightedQuote)
@@ -20,21 +22,22 @@ export default function Quotes() {
           quotes?.filter(qt => {
             return displayAllQuotes || !qt.apocryphal
           })
-            .map(qt => (
+            .map(qt => 
+            (
               <div
-                key={qt.id}
-                className={`quote${qt.apocryphal ? " fake" : ''}${highlightedQuote === qt.id ? " highlight" : ''}`}
+              key={qt.id}
+              className={`quote${qt.apocryphal ? " fake" : ''}${highlightedQuote === qt.id ? " highlight" : ''}`}
               >
                 <div>{qt.quoteText}</div>
                 <div>{qt.authorName}</div>
                 <div className="quote-buttons">
-                  <button>DELETE</button>
+                  <button onClick={() => deleteQuote(qt.id) }>DELETE</button>
                   <button onClick={() => dispatch(setHighlightedQuote(qt.id))}>HIGHLIGHT</button>
-                  <button>FAKE</button>
+                  <button onClick={() => toggleFake({id: qt.id, quote: {apocryphal: !qt.apocryphal}})}>FAKE</button>
                 </div>
               </div>
             ))
-        }
+          }
         {
           !quotes?.length && "No quotes here! Go write some."
         }
