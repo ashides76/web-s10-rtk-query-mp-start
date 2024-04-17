@@ -24,7 +24,7 @@ const reducer = (state, action) => {
 
 export default function TodoForm() {
   const [state, dispatch] = useReducer(reducer, initialState)
-  const [createQuote] = useCreateQuoteMutation()
+  const [createQuote, { error, isLoading }] = useCreateQuoteMutation()
 
   const onChange = ({ target: { name, value } }) => {
     dispatch({ type: CHANGE_INPUT, payload: { name, value } })
@@ -36,12 +36,19 @@ export default function TodoForm() {
     evt.preventDefault()
     const {authorName, quoteText} = state
     createQuote({authorName, quoteText})
-    resetForm()
+    .unwrap()
+    .then(() => {
+      resetForm()
+    })
+    .catch(err => {  // catch is added to keep the form data resident??? I coudn't follow the message you delivered. 
+      err.data.message
+    })
   }
 
   return (
     <form id="quoteForm" onSubmit={onNewQuote}>
-      <h3>New Quote Form</h3>
+      <div className="error">{error && error.data.message}</div>
+      <h3>New Quote {isLoading && 'Being created...'}</h3>
       <label><span>Author:</span>
         <input
           type='text'

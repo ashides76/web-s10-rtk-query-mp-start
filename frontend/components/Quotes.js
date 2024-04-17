@@ -7,18 +7,21 @@ import {
 import { useGetQuotesQuery, useToggleFakeMutation, useDeleteQuoteMutation } from '../state/quotesApi'
 
 export default function Quotes() {
-  const {data: quotes} = useGetQuotesQuery()
-  const [toggleFake] = useToggleFakeMutation()
-  const [deleteQuote] = useDeleteQuoteMutation()
+  const {data: quotes, isLoading: quotesLoading, isFetching: quotesRefreshing } = useGetQuotesQuery()
+  const [toggleFake, {error: toggleError, isLoading: quotesToggling}] = useToggleFakeMutation()
+  const [deleteQuote, {isSuccess: success}] = useDeleteQuoteMutation()
 
   const displayAllQuotes = useSelector(st => st.quotesState.displayAllQuotes)
   const highlightedQuote = useSelector(st => st.quotesState.highlightedQuote)
   const dispatch = useDispatch()
   return (
     <div id="quotes">
-      <h3>Quotes</h3>
+      <div className="error">{toggleError && toggleError.data.message}</div>
+      <div className="success">{success && 'Quote deleted successfully!'}</div>
+      <h3>Quotes {(quotesToggling || quotesRefreshing) && 'Being updated...'}</h3>
       <div>
         {
+          quotesLoading ? 'Quotes loading...' :
           quotes?.filter(qt => {
             return displayAllQuotes || !qt.apocryphal
           })

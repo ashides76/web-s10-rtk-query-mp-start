@@ -130,6 +130,13 @@ input, textarea {
   margin-top: -4px;
   align-self: flex-end;
 }
+.success {
+  color: green;
+  font-size: 0.85em;
+  height: 20px;
+  margin-top: -4px;
+  align-self: flex-end;
+}
 
 button {
   border: 1px solid #93005a;
